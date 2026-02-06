@@ -4,7 +4,7 @@
 
 [![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Code Style](https://img.shields.io/badge/code%20style-modular-brightgreen.svg)](https://github.com/adityabhattacharjee/mutual-fund-analyzer)
+[![Code Style](https://img.shields.io/badge/code%20style-modular-brightgreen.svg)](https://github.com/itabhijitb/mutual-fund-analyzer)
 
 ## 🌟 Features
 
@@ -21,7 +21,7 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/adityabhattacharjee/mutual-fund-analyzer.git
+git clone https://github.com/itabhijitb/mutual-fund-analyzer.git
 cd mutual-fund-analyzer
 
 # Create virtual environment
@@ -161,8 +161,8 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) file.
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/adityabhattacharjee/mutual-fund-analyzer/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/adityabhattacharjee/mutual-fund-analyzer/discussions)
+- **Issues**: [GitHub Issues](https://github.com/itabhijitb/mutual-fund-analyzer/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/itabhijitb/mutual-fund-analyzer/discussions)
 
 ---
 
