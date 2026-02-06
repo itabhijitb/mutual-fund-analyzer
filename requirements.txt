@@ -1,0 +1,17 @@
+# Core dependencies
+requests>=2.32.0
+pandas>=2.3.0
+numpy>=1.26.0,<2.0.0
+
+# Financial analysis libraries
+empyrical>=0.5.5
+quantstats>=0.0.77
+pyportfolioopt>=1.5.6
+scipy>=1.13.0
+
+# Visualization
+matplotlib>=3.9.0
+
+# Optional: For interactive analysis
+ipython>=8.18.0
+jupyter>=1.1.0
