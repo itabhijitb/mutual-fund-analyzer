@@ -45,14 +45,15 @@ FUND_CATEGORIES = {
     '18': {'name': 'Aggressive Hybrid', 'search': 'Aggressive Hybrid'},
     '19': {'name': 'Conservative Hybrid', 'search': 'Conservative Hybrid'},
     '20': {'name': 'Equity Savings', 'search': 'Equity Savings'},
-    '21': {'name': 'Arbitrage Fund', 'search': 'Arbitrage'},
-    '22': {'name': 'Index Fund - Nifty 50', 'search': 'Nifty 50'},
-    '23': {'name': 'Index Fund - Sensex', 'search': 'Sensex'},
-    '24': {'name': 'Index Fund - Nifty Next 50', 'search': 'Nifty Next 50'},
-    '25': {'name': 'Value Fund', 'search': 'Value'},
-    '26': {'name': 'Contra Fund', 'search': 'Contra'},
-    '27': {'name': 'International / Global', 'search': 'International'},
-    '28': {'name': 'Custom Search', 'search': None}
+    '21': {'name': 'Multi Asset Allocation', 'search': 'Multi Asset'},
+    '22': {'name': 'Arbitrage Fund', 'search': 'Arbitrage'},
+    '23': {'name': 'Index Fund - Nifty 50', 'search': 'Nifty 50'},
+    '24': {'name': 'Index Fund - Sensex', 'search': 'Sensex'},
+    '25': {'name': 'Index Fund - Nifty Next 50', 'search': 'Nifty Next 50'},
+    '26': {'name': 'Value Fund', 'search': 'Value'},
+    '27': {'name': 'Contra Fund', 'search': 'Contra'},
+    '28': {'name': 'International / Global', 'search': 'International'},
+    '29': {'name': 'Custom Search', 'search': None}
 }
 
 # Plan Types

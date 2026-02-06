@@ -8,7 +8,7 @@
 
 ## 🌟 Features
 
-- **28 Fund Categories**: Equity, Sectoral, Thematic, Hybrid, Index funds
+- **29 Fund Categories**: Equity, Sectoral, Thematic, Hybrid, Multi Asset, Index funds
 - **Industry-Standard Metrics**: Sharpe, Sortino, Calmar ratios with monthly returns
 - **Smart Fund Screener**: Find top 5 performers with composite scoring
 - **Plan Type Filtering**: Growth, IDCW (Dividend), or Both
@@ -112,7 +112,7 @@ Banking, Technology, Pharma, Infrastructure, FMCG, Energy
 ESG, Dividend Yield
 
 ### Tax Saving & Hybrid
-ELSS, Balanced, Aggressive Hybrid, Conservative Hybrid, Equity Savings, Arbitrage
+ELSS, Balanced, Aggressive Hybrid, Conservative Hybrid, Equity Savings, Multi Asset Allocation, Arbitrage
 
 ### Index Funds
 Nifty 50, Sensex, Nifty Next 50

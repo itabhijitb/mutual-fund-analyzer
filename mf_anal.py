@@ -820,14 +820,15 @@ if __name__ == "__main__":
             '18': {'name': 'Aggressive Hybrid', 'search': 'Aggressive Hybrid'},
             '19': {'name': 'Conservative Hybrid', 'search': 'Conservative Hybrid'},
             '20': {'name': 'Equity Savings', 'search': 'Equity Savings'},
-            '21': {'name': 'Arbitrage Fund', 'search': 'Arbitrage'},
-            '22': {'name': 'Index Fund - Nifty 50', 'search': 'Nifty 50'},
-            '23': {'name': 'Index Fund - Sensex', 'search': 'Sensex'},
-            '24': {'name': 'Index Fund - Nifty Next 50', 'search': 'Nifty Next 50'},
-            '25': {'name': 'Value Fund', 'search': 'Value'},
-            '26': {'name': 'Contra Fund', 'search': 'Contra'},
-            '27': {'name': 'International / Global', 'search': 'International'},
-            '28': {'name': 'Custom Search', 'search': None}
+            '21': {'name': 'Multi Asset Allocation', 'search': 'Multi Asset'},
+            '22': {'name': 'Arbitrage Fund', 'search': 'Arbitrage'},
+            '23': {'name': 'Index Fund - Nifty 50', 'search': 'Nifty 50'},
+            '24': {'name': 'Index Fund - Sensex', 'search': 'Sensex'},
+            '25': {'name': 'Index Fund - Nifty Next 50', 'search': 'Nifty Next 50'},
+            '26': {'name': 'Value Fund', 'search': 'Value'},
+            '27': {'name': 'Contra Fund', 'search': 'Contra'},
+            '28': {'name': 'International / Global', 'search': 'International'},
+            '29': {'name': 'Custom Search', 'search': None}
         }
         
         print("\n📂 EQUITY FUNDS:")
@@ -847,22 +848,23 @@ if __name__ == "__main__":
         print("\n💰 TAX SAVING & HYBRID:")
         print(" 16. ELSS / Tax Saver             17. Balanced / Hybrid")
         print(" 18. Aggressive Hybrid            19. Conservative Hybrid")
-        print(" 20. Equity Savings               21. Arbitrage Fund")
+        print(" 20. Equity Savings               21. Multi Asset Allocation")
+        print(" 22. Arbitrage Fund")
         
         print("\n📈 INDEX FUNDS:")
-        print(" 22. Nifty 50                     23. Sensex")
-        print(" 24. Nifty Next 50")
+        print(" 23. Nifty 50                     24. Sensex")
+        print(" 25. Nifty Next 50")
         
         print("\n🎯 OTHER STRATEGIES:")
-        print(" 25. Value Fund                   26. Contra Fund")
-        print(" 27. International / Global       28. Custom Search")
+        print(" 26. Value Fund                   27. Contra Fund")
+        print(" 28. International / Global       29. Custom Search")
         
         print("\n" + "=" * 70)
         
-        category_choice = input("\nSelect category number (1-28): ").strip()
+        category_choice = input("\nSelect category number (1-29): ").strip()
         
         if category_choice in categories:
-            if category_choice == '28':
+            if category_choice == '29':
                 search_query = input("\nEnter custom search term: ").strip()
                 selected_category_name = search_query
             else:
