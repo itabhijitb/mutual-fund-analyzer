@@ -1,0 +1,6 @@
+theme: jekyll-theme-cayman
+title: Mutual Fund Analyzer
+description: Production-ready mutual fund analysis tool with industry-standard risk metrics
+show_downloads: true
+github:
+  repository_url: https://github.com/adityabhattacharjee/mutual-fund-analyzer
