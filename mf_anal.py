@@ -4,6 +4,7 @@ import numpy as np
 import empyrical as ep
 import quantstats as qs
 from datetime import datetime
+import time
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -11,37 +12,66 @@ warnings.filterwarnings('ignore')
 def search_mutual_funds(query: str) -> list:
     api_url = "https://api.mfapi.in/mf/search"
     params = {"q": query}
-    response = requests.get(api_url, params=params)
-    response.raise_for_status()
-    return response.json()
+    
+    max_retries = 3
+    retry_delay = 2
+    
+    for attempt in range(max_retries):
+        try:
+            response = requests.get(api_url, params=params, timeout=30)
+            response.raise_for_status()
+            return response.json()
+        except (requests.ConnectionError, requests.Timeout) as e:
+            if attempt < max_retries - 1:
+                print(f"⚠️  Connection error. Retrying in {retry_delay}s... (attempt {attempt + 1}/{max_retries})")
+                time.sleep(retry_delay)
+                retry_delay *= 2
+            else:
+                raise ConnectionError(
+                    f"Failed to search after {max_retries} attempts. "
+                    "The API server may be temporarily unavailable. Please try again later."
+                ) from e
 
 
 def fetch_nav_history(mutual_fund_scheme_code: str) -> pd.DataFrame:
     api_url = f"https://api.mfapi.in/mf/{mutual_fund_scheme_code}"
-    response = requests.get(api_url)
     
-    if response.status_code == 404:
-        raise ValueError(
-            f"Scheme code '{mutual_fund_scheme_code}' not found. "
-            "Please enter a valid numeric scheme code (e.g., 119551 for Axis Bluechip Fund)."
-        )
+    max_retries = 3
+    retry_delay = 2
     
-    response.raise_for_status()
-
-    nav_json = response.json()["data"]
-
-    nav_dataframe = pd.DataFrame(nav_json)
-
-    nav_dataframe["date"] = pd.to_datetime(
-        nav_dataframe["date"], format="%d-%m-%Y"
-    )
-
-    nav_dataframe["nav"] = nav_dataframe["nav"].astype(float)
-
-    nav_dataframe.sort_values("date", inplace=True)
-
-    nav_dataframe.reset_index(drop=True, inplace=True)
-    return nav_dataframe
+    for attempt in range(max_retries):
+        try:
+            response = requests.get(api_url, timeout=30)
+            
+            if response.status_code == 404:
+                raise ValueError(
+                    f"Scheme code '{mutual_fund_scheme_code}' not found. "
+                    "Please enter a valid numeric scheme code (e.g., 119551 for Axis Bluechip Fund)."
+                )
+            
+            response.raise_for_status()
+            nav_json = response.json()["data"]
+            
+            nav_dataframe = pd.DataFrame(nav_json)
+            nav_dataframe["date"] = pd.to_datetime(
+                nav_dataframe["date"], format="%d-%m-%Y"
+            )
+            nav_dataframe["nav"] = nav_dataframe["nav"].astype(float)
+            nav_dataframe.sort_values("date", inplace=True)
+            nav_dataframe.reset_index(drop=True, inplace=True)
+            
+            return nav_dataframe
+            
+        except (requests.ConnectionError, requests.Timeout) as e:
+            if attempt < max_retries - 1:
+                print(f"⚠️  Connection error. Retrying in {retry_delay}s... (attempt {attempt + 1}/{max_retries})")
+                time.sleep(retry_delay)
+                retry_delay *= 2
+            else:
+                raise ConnectionError(
+                    f"Failed to fetch data for scheme {mutual_fund_scheme_code} after {max_retries} attempts. "
+                    "The API server may be temporarily unavailable. Please try again later."
+                ) from e
 
 
 def calculate_comprehensive_metrics(
