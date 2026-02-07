@@ -83,9 +83,10 @@ class MFAPIClient:
                 logger.info(f"Fetched {len(nav_dataframe)} NAV records for scheme {scheme_code}")
                 return nav_dataframe
                 
-            except (requests.ConnectionError, requests.Timeout) as e:
+            except (requests.ConnectionError, requests.Timeout, requests.HTTPError) as e:
                 if attempt < max_retries - 1:
-                    logger.warning(f"Connection error on attempt {attempt + 1}/{max_retries} for scheme {scheme_code}. Retrying in {retry_delay}s...")
+                    error_msg = f"Server error ({e.response.status_code})" if hasattr(e, 'response') and e.response else "Connection error"
+                    logger.warning(f"{error_msg} on attempt {attempt + 1}/{max_retries} for scheme {scheme_code}. Retrying in {retry_delay}s...")
                     time.sleep(retry_delay)
                     retry_delay *= 2  # Exponential backoff
                 else:
@@ -124,9 +125,10 @@ class MFAPIClient:
                 logger.info(f"Found {len(results)} funds matching '{query}'")
                 return results
                 
-            except (requests.ConnectionError, requests.Timeout) as e:
+            except (requests.ConnectionError, requests.Timeout, requests.HTTPError) as e:
                 if attempt < max_retries - 1:
-                    logger.warning(f"Connection error on attempt {attempt + 1}/{max_retries} for search. Retrying in {retry_delay}s...")
+                    error_msg = f"Server error ({e.response.status_code})" if hasattr(e, 'response') and e.response else "Connection error"
+                    logger.warning(f"{error_msg} on attempt {attempt + 1}/{max_retries} for search. Retrying in {retry_delay}s...")
                     time.sleep(retry_delay)
                     retry_delay *= 2
                 else:

@@ -21,9 +21,10 @@ def search_mutual_funds(query: str) -> list:
             response = requests.get(api_url, params=params, timeout=30)
             response.raise_for_status()
             return response.json()
-        except (requests.ConnectionError, requests.Timeout) as e:
+        except (requests.ConnectionError, requests.Timeout, requests.HTTPError) as e:
             if attempt < max_retries - 1:
-                print(f"⚠️  Connection error. Retrying in {retry_delay}s... (attempt {attempt + 1}/{max_retries})")
+                error_msg = f"Server error ({e.response.status_code})" if hasattr(e, 'response') and e.response else "Connection error"
+                print(f"⚠️  {error_msg}. Retrying in {retry_delay}s... (attempt {attempt + 1}/{max_retries})")
                 time.sleep(retry_delay)
                 retry_delay *= 2
             else:
@@ -62,9 +63,10 @@ def fetch_nav_history(mutual_fund_scheme_code: str) -> pd.DataFrame:
             
             return nav_dataframe
             
-        except (requests.ConnectionError, requests.Timeout) as e:
+        except (requests.ConnectionError, requests.Timeout, requests.HTTPError) as e:
             if attempt < max_retries - 1:
-                print(f"⚠️  Connection error. Retrying in {retry_delay}s... (attempt {attempt + 1}/{max_retries})")
+                error_msg = f"Server error ({e.response.status_code})" if hasattr(e, 'response') and e.response else "Connection error"
+                print(f"⚠️  {error_msg}. Retrying in {retry_delay}s... (attempt {attempt + 1}/{max_retries})")
                 time.sleep(retry_delay)
                 retry_delay *= 2
             else:
