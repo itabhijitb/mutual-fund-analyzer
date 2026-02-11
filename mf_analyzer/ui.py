@@ -316,13 +316,16 @@ class ConsoleUI:
             if metric in metrics:
                 print(f"  {metric:.<50} {metrics[metric]:>15}")
         
-        # Analysis Details
-        print("\n📅 ANALYSIS DETAILS:")
-        print("-" * 70)
-        time_metrics = ['Analysis Period', 'Start Date', 'End Date', 'Total Months', 'Risk-Free Rate (%)']
-        for metric in time_metrics:
-            if metric in metrics:
-                print(f"  {metric:.<50} {metrics[metric]:>15}")
+        # Analysis Period - Highlighted Section
+        print("\n" + "=" * 70)
+        print("📅 ANALYSIS PERIOD")
+        print("=" * 70)
+        print(f"\n  Period: {metrics.get('Analysis Period', 'N/A')}")
+        print(f"  Start Date: {metrics.get('Start Date', 'N/A')}")
+        print(f"  End Date: {metrics.get('End Date', 'N/A')}")
+        print(f"  Total Months Analyzed: {metrics.get('Total Months', 'N/A')}")
+        print(f"  Total Days: {metrics.get('Total Days', 'N/A')}")
+        print(f"  Risk-Free Rate: {metrics.get('Risk-Free Rate (%)', 'N/A')}%")
         
         print("\n" + "=" * 70)
     

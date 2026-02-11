@@ -193,6 +193,13 @@ class MutualFundAnalyzer:
                     if metric in metrics:
                         print(f"  {metric:.<50} {metrics[metric]:>15}")
                 
+                # Analysis Period
+                print(f"\n📅 ANALYSIS PERIOD:")
+                print("-" * 70)
+                print(f"  Period: {metrics.get('Analysis Period', 'N/A')}")
+                print(f"  Date Range: {metrics.get('Start Date', 'N/A')} to {metrics.get('End Date', 'N/A')}")
+                print(f"  Total Months: {metrics.get('Total Months', 'N/A')}")
+                
                 # Generate separate report if requested
                 if report_choice == '2':
                     output_file = f"mf_report_{fund['scheme_code']}.html"
