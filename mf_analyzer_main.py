@@ -164,6 +164,7 @@ class MutualFundAnalyzer:
                     funds_data_for_tabbed.append({
                         'scheme_code': fund['scheme_code'],
                         'scheme_name': fund['scheme_name'],
+                        'efficiency_score': fund.get('efficiency_score', 'N/A'),
                         'nav_df': nav_df,
                         'metrics': metrics
                     })

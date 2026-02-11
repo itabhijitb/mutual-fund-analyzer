@@ -4,10 +4,11 @@ Fund screening and ranking module
 
 from typing import List, Dict, Optional
 import logging
+import numpy as np
 
 from .api_client import MFAPIClient
 from .calculator import RiskMetricsCalculator
-from .config import SCORING_WEIGHTS, MIN_MONTHS_PER_YEAR, PLAN_TYPES
+from .config import MIN_MONTHS_PER_YEAR, PLAN_TYPES
 
 logger = logging.getLogger(__name__)
 
@@ -42,23 +43,69 @@ class FundScreener:
         logger.info(f"Filtered {len(funds)} funds to {len(filtered)} by {plan_type} plan type")
         return filtered
     
-    def calculate_composite_score(self, metrics: Dict) -> float:
+    def calculate_efficiency_score(self, metrics: Dict) -> float:
         """
-        Calculate composite score for ranking funds.
+        Calculate efficiency score using the same Risk-Adjusted Efficiency Model
+        as the fund comparator for consistent rankings.
+        
+        Model considers:
+        1. Risk-adjusted returns (Sharpe, Sortino, Calmar) - 60% weight
+        2. Absolute return with diminishing returns - 25% weight
+        3. Risk penalty (volatility, drawdown) - 15% weight
         
         Args:
             metrics: Dictionary of fund metrics
             
         Returns:
-            Composite score
+            Efficiency score (0-100 scale)
         """
-        score = (
-            metrics['sharpe_ratio'] * SCORING_WEIGHTS['sharpe_ratio'] +
-            (metrics['annual_return'] / 20) * SCORING_WEIGHTS['annual_return'] +
-            metrics['sortino_ratio'] * SCORING_WEIGHTS['sortino_ratio'] +
-            metrics['calmar_ratio'] * SCORING_WEIGHTS['calmar_ratio']
+        annual_return = metrics.get('annual_return', 0)
+        sharpe = metrics.get('sharpe_ratio', 0)
+        sortino = metrics.get('sortino_ratio', 0)
+        calmar = metrics.get('calmar_ratio', 0)
+        volatility = metrics.get('annual_volatility', 0)
+        max_drawdown = abs(metrics.get('max_drawdown', 0))
+        
+        # Component 1: Risk-Adjusted Returns (60% weight)
+        risk_adj_score = 0
+        
+        if sharpe > 0:
+            sharpe_normalized = min(sharpe / 2.0, 1.0) * 100
+            risk_adj_score += sharpe_normalized * 0.4
+        
+        if sortino > 0:
+            sortino_normalized = min(sortino / 2.5, 1.0) * 100
+            risk_adj_score += sortino_normalized * 0.35
+        
+        if calmar > 0:
+            calmar_normalized = min(calmar / 2.0, 1.0) * 100
+            risk_adj_score += calmar_normalized * 0.25
+        
+        # Component 2: Absolute Return with Diminishing Returns (25% weight)
+        if annual_return > 0:
+            return_score = np.log1p(annual_return / 10) / np.log1p(4) * 100
+        else:
+            return_score = 0
+        
+        # Component 3: Risk Penalty (15% weight)
+        volatility_penalty = 0
+        if volatility > 0:
+            volatility_penalty = min((volatility / 20) ** 1.5 * 50, 50)
+        
+        drawdown_penalty = 0
+        if max_drawdown > 0:
+            drawdown_penalty = min((max_drawdown / 30) ** 1.5 * 50, 50)
+        
+        risk_penalty = (volatility_penalty * 0.4 + drawdown_penalty * 0.6)
+        
+        # Combine components
+        efficiency_score = (
+            risk_adj_score * 0.60 +
+            return_score * 0.25 -
+            risk_penalty * 0.15
         )
-        return round(score, 2)
+        
+        return round(max(efficiency_score, 0), 2)
     
     def screen_and_rank(
         self,
@@ -123,7 +170,7 @@ class FundScreener:
                 if metrics and metrics['months_analyzed'] >= analysis_years * MIN_MONTHS_PER_YEAR:
                     metrics['scheme_code'] = scheme_code
                     metrics['scheme_name'] = scheme_name
-                    metrics['composite_score'] = self.calculate_composite_score(metrics)
+                    metrics['efficiency_score'] = self.calculate_efficiency_score(metrics)
                     analyzed_funds.append(metrics)
                     
             except Exception as e:
@@ -134,8 +181,8 @@ class FundScreener:
             print(f"\n❌ No funds had sufficient {analysis_years}-year data for analysis")
             return []
         
-        # Sort by composite score
-        analyzed_funds.sort(key=lambda x: x['composite_score'], reverse=True)
+        # Sort by efficiency score (Risk-Adjusted Efficiency Model)
+        analyzed_funds.sort(key=lambda x: x['efficiency_score'], reverse=True)
         
         print(f"\n✅ Successfully analyzed {len(analyzed_funds)} funds with sufficient data\n")
         

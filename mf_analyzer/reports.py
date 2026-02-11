@@ -218,6 +218,7 @@ class ReportGenerator:
                         <tr>
                             <th>Rank</th>
                             <th>Fund Name</th>
+                            <th>Efficiency Score</th>
                             <th>Annual Return</th>
                             <th>Sharpe Ratio</th>
                             <th>Sortino Ratio</th>
@@ -234,10 +235,14 @@ class ReportGenerator:
             rank_class = f"rank-{idx+1}" if idx < 3 else ""
             rank_emoji = "🥇" if idx == 0 else "🥈" if idx == 1 else "🥉" if idx == 2 else f"{idx+1}"
             
+            # Get efficiency score from fund data if available
+            efficiency_score = fund.get('efficiency_score', 'N/A')
+            
             html_content += f"""
                         <tr>
                             <td><span class="rank-badge {rank_class}">{rank_emoji}</span></td>
                             <td><strong>{fund['scheme_name'][:50]}</strong></td>
+                            <td style="color: #667eea; font-weight: 700; font-size: 1.1em;">{efficiency_score}</td>
                             <td style="color: #28a745; font-weight: 600;">{metrics.get('Annual Return (%)', 'N/A')}%</td>
                             <td>{metrics.get('Sharpe Ratio', 'N/A')}</td>
                             <td>{metrics.get('Sortino Ratio', 'N/A')}</td>
@@ -427,17 +432,19 @@ class ReportGenerator:
         print("=" * 120)
         
         # Header
-        print(f"\n{'Rank':<6}{'Fund Name':<50}{'Return':<12}{'Sharpe':<10}{'Sortino':<10}{'Drawdown':<12}{'Score':<10}")
+        print(f"\n{'Rank':<6}{'Fund Name':<50}{'Efficiency':<12}{'Return':<12}{'Sharpe':<10}{'Sortino':<10}{'Drawdown':<12}")
         print("-" * 120)
         
         # Rows
         for idx, fund in enumerate(funds, 1):
             rank_emoji = "🥇" if idx == 1 else "🥈" if idx == 2 else "🥉" if idx == 3 else f"{idx}."
             name = fund['scheme_name'][:48] + ".." if len(fund['scheme_name']) > 50 else fund['scheme_name']
+            efficiency = fund.get('efficiency_score', fund.get('composite_score', 0))
             
-            print(f"{rank_emoji:<6}{name:<50}{fund['annual_return']:>10.2f}%  "
+            print(f"{rank_emoji:<6}{name:<50}{efficiency:>10.2f}  "
+                  f"{fund['annual_return']:>10.2f}%  "
                   f"{fund['sharpe_ratio']:>8.2f}  {fund['sortino_ratio']:>8.2f}  "
-                  f"{fund['max_drawdown']:>10.2f}%  {fund['composite_score']:>8.2f}")
+                  f"{fund['max_drawdown']:>10.2f}%")
         
         print("\n" + "=" * 120)
         
