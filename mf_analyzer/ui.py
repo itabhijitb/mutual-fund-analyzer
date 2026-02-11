@@ -22,12 +22,13 @@ class ConsoleUI:
         print("\nChoose analysis mode:")
         print("  1. Analyze a single fund (detailed metrics)")
         print("  2. Find top 5 funds for 5-year investment (screener)")
+        print("  3. Compare two funds and get recommendation")
         print("=" * 70)
     
     @staticmethod
     def get_mode_choice() -> str:
         """Get user's choice of analysis mode"""
-        return input("\nEnter your choice (1 or 2): ").strip()
+        return input("\nEnter your choice (1, 2, or 3): ").strip()
     
     @staticmethod
     def display_categories() -> None:
@@ -265,3 +266,76 @@ class ConsoleUI:
         """Ask if user wants to generate HTML report"""
         response = input("\n📊 Generate detailed HTML report? (y/n): ").strip().lower()
         return response == 'y'
+    
+    @staticmethod
+    def display_comparison(comparison: dict) -> None:
+        """Display fund comparison results with recommendation"""
+        print("\n" + "=" * 80)
+        print("🔍 FUND COMPARISON ANALYSIS")
+        print("=" * 80)
+        
+        fund1_name = comparison['fund1_name']
+        fund2_name = comparison['fund2_name']
+        
+        print(f"\n📊 Comparing:")
+        print(f"  Fund 1: {fund1_name}")
+        print(f"  Fund 2: {fund2_name}")
+        
+        # Display metric-by-metric comparison
+        print("\n" + "=" * 80)
+        print("📈 METRIC COMPARISON")
+        print("=" * 80)
+        print(f"\n{'Metric':<30} {'Fund 1':>15} {'Fund 2':>15} {'Winner':>15}")
+        print("-" * 80)
+        
+        for metric, details in comparison['comparison_details'].items():
+            val1 = details['fund1_value']
+            val2 = details['fund2_value']
+            winner_text = "Fund 1" if details['winner'] == 'fund1' else "Fund 2" if details['winner'] == 'fund2' else "Tie"
+            
+            # Add emoji for winner
+            if details['winner'] == 'fund1':
+                winner_display = f"✅ {winner_text}"
+            elif details['winner'] == 'fund2':
+                winner_display = f"✅ {winner_text}"
+            else:
+                winner_display = "🤝 Tie"
+            
+            print(f"{metric:<30} {val1:>15.2f} {val2:>15.2f} {winner_display:>15}")
+        
+        # Display scores
+        print("\n" + "=" * 80)
+        print("🏆 OVERALL SCORES")
+        print("=" * 80)
+        scores = comparison['scores']
+        print(f"\n  Fund 1 Score: {scores['fund1_score']:.2f}/100")
+        print(f"  Fund 2 Score: {scores['fund2_score']:.2f}/100")
+        print(f"  Score Difference: {abs(scores['fund1_score'] - scores['fund2_score']):.2f}")
+        
+        # Display recommendation
+        print("\n" + "=" * 80)
+        print("💡 RECOMMENDATION")
+        print("=" * 80)
+        rec = comparison['recommendation']
+        
+        print(f"\n  🎯 Recommended Fund: {rec['recommended_fund']}")
+        print(f"  📊 Confidence Level: {rec['confidence']}")
+        print(f"  📝 Reason: {rec['reason']}")
+        print(f"  ⚠️  Risk Profile: {rec['risk_profile']}")
+        print(f"  ⏰ Investment Horizon: {rec['suggested_investment_horizon']}")
+        
+        if rec['key_strengths']:
+            print(f"\n  ✅ Key Strengths:")
+            for strength in rec['key_strengths']:
+                print(f"     • {strength}")
+        
+        if rec['key_weaknesses']:
+            print(f"\n  ⚠️  Areas to Watch:")
+            for weakness in rec['key_weaknesses']:
+                print(f"     • {weakness}")
+        
+        print("\n" + "=" * 80)
+        print("\n💡 Note: This recommendation is based on historical performance.")
+        print("   Past performance does not guarantee future results.")
+        print("   Consider your risk tolerance and investment goals.")
+        print("=" * 80)

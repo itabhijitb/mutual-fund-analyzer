@@ -8,7 +8,7 @@ API_TIMEOUT = 30  # seconds
 
 # Analysis Configuration
 DEFAULT_RISK_FREE_RATE = 0.07  # 7% (Indian 10-year G-Sec rate)
-DEFAULT_ANALYSIS_PERIOD_YEARS = 3
+DEFAULT_ANALYSIS_PERIOD_YEARS = None  # None = use entire NAV history for better accuracy
 DEFAULT_SCREENING_PERIOD_YEARS = 5
 TOP_N_FUNDS = 5
 

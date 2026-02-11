@@ -13,6 +13,7 @@ from mf_analyzer.calculator import RiskMetricsCalculator
 from mf_analyzer.screener import FundScreener
 from mf_analyzer.reports import ReportGenerator
 from mf_analyzer.ui import ConsoleUI
+from mf_analyzer.comparator import FundComparator
 from mf_analyzer.config import (
     DEFAULT_RISK_FREE_RATE,
     DEFAULT_ANALYSIS_PERIOD_YEARS,
@@ -40,6 +41,7 @@ class MutualFundAnalyzer:
         self.calculator = RiskMetricsCalculator(risk_free_rate=DEFAULT_RISK_FREE_RATE)
         self.screener = FundScreener(self.api_client, self.calculator)
         self.report_generator = ReportGenerator()
+        self.comparator = FundComparator()
         self.ui = ConsoleUI()
     
     def run_single_fund_analysis(self) -> None:
@@ -229,6 +231,93 @@ class MutualFundAnalyzer:
         
         print("\n" + "=" * 70 + "\n")
     
+    def run_fund_comparison(self) -> None:
+        """Run fund comparison mode"""
+        print("\n" + "=" * 70)
+        print("🔍 FUND COMPARISON MODE")
+        print("=" * 70)
+        
+        # Get first fund
+        print("\n📊 FUND 1")
+        print("-" * 70)
+        user_input1 = self.ui.get_fund_input()
+        
+        if not user_input1:
+            return
+        
+        scheme_code1, fund_name1 = self._get_fund_details(user_input1)
+        if not scheme_code1:
+            return
+        
+        # Get second fund
+        print("\n📊 FUND 2")
+        print("-" * 70)
+        user_input2 = self.ui.get_fund_input()
+        
+        if not user_input2:
+            return
+        
+        scheme_code2, fund_name2 = self._get_fund_details(user_input2)
+        if not scheme_code2:
+            return
+        
+        try:
+            # Fetch NAV data for both funds
+            print("\n⏳ Fetching NAV data for both funds...")
+            nav_data1 = self.api_client.fetch_nav_history(scheme_code1)
+            nav_data2 = self.api_client.fetch_nav_history(scheme_code2)
+            
+            # Calculate metrics for both funds
+            print("⏳ Calculating comprehensive metrics...")
+            metrics1 = self.calculator.calculate_comprehensive_metrics(
+                nav_data1,
+                analysis_period_years=DEFAULT_ANALYSIS_PERIOD_YEARS
+            )
+            metrics2 = self.calculator.calculate_comprehensive_metrics(
+                nav_data2,
+                analysis_period_years=DEFAULT_ANALYSIS_PERIOD_YEARS
+            )
+            
+            # Compare funds
+            print("⏳ Comparing funds and generating recommendation...")
+            comparison = self.comparator.compare_funds(
+                metrics1, metrics2,
+                fund_name1, fund_name2
+            )
+            
+            # Display comparison
+            self.ui.display_comparison(comparison)
+            
+        except Exception as e:
+            print(f"\n❌ Error during comparison: {e}")
+            logger.error(f"Comparison error: {e}", exc_info=True)
+    
+    def _get_fund_details(self, user_input: str) -> tuple:
+        """Helper to get scheme code and fund name from user input"""
+        if user_input.isdigit():
+            scheme_code = user_input
+            fund_name = f"Fund {scheme_code}"
+        else:
+            try:
+                search_results = self.api_client.search_mutual_funds(user_input)
+                
+                if not search_results:
+                    print(f"\n❌ No funds found matching '{user_input}'")
+                    return None, None
+                
+                selected_fund = self.ui.select_fund_from_search(search_results)
+                if not selected_fund:
+                    return None, None
+                
+                scheme_code = str(selected_fund['schemeCode'])
+                fund_name = selected_fund['schemeName']
+            except Exception as e:
+                print(f"\n❌ Error during search: {e}")
+                logger.error(f"Search error: {e}", exc_info=True)
+                return None, None
+        
+        return scheme_code, fund_name
+    
     def run(self) -> None:
         """Main application entry point"""
         try:
@@ -237,6 +326,8 @@ class MutualFundAnalyzer:
             
             if mode == '2':
                 self.run_fund_screener()
+            elif mode == '3':
+                self.run_fund_comparison()
             else:
                 self.run_single_fund_analysis()
                 

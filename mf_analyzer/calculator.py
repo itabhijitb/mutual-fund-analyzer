@@ -24,14 +24,14 @@ class RiskMetricsCalculator:
     def calculate_comprehensive_metrics(
         self,
         nav_dataframe: pd.DataFrame,
-        analysis_period_years: int = DEFAULT_ANALYSIS_PERIOD_YEARS
+        analysis_period_years: Optional[int] = DEFAULT_ANALYSIS_PERIOD_YEARS
     ) -> Dict:
         """
         Calculate comprehensive risk and performance metrics.
         
         Args:
             nav_dataframe: DataFrame with 'date' and 'nav' columns
-            analysis_period_years: Number of years to analyze (default: 3)
+            analysis_period_years: Number of years to analyze (None = entire history)
             
         Returns:
             Dictionary containing all calculated metrics
@@ -46,10 +46,13 @@ class RiskMetricsCalculator:
         if analysis_period_years:
             cutoff_date = df.index[-1] - pd.DateOffset(years=analysis_period_years)
             df = df[df.index >= cutoff_date]
+            period_desc = f"{analysis_period_years}-year"
+        else:
+            period_desc = "entire history"
         
         if len(df) < 30:
             raise ValueError(
-                f"Insufficient data for {analysis_period_years}-year analysis "
+                f"Insufficient data for {period_desc} analysis "
                 f"(need at least 30 days, got {len(df)})"
             )
         
