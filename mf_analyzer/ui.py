@@ -2,7 +2,7 @@
 User interface module for console interactions
 """
 
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Dict
 import logging
 
 from .config import FUND_CATEGORIES
@@ -197,6 +197,46 @@ class ConsoleUI:
             selected_idx = int(selection) - 1
             if 0 <= selected_idx < min(len(results), limit):
                 return selected_idx
+            else:
+                print("\n❌ Invalid selection.")
+                return None
+        except ValueError:
+            print("\n❌ Invalid input.")
+            return None
+    
+    @staticmethod
+    def select_fund_from_search(results: list, limit: int = 10) -> Optional[Dict]:
+        """
+        Display search results and return selected fund object.
+        
+        Args:
+            results: List of fund search results
+            limit: Maximum number of results to display
+            
+        Returns:
+            Selected fund dictionary or None if user quits
+        """
+        print(f"\nFound {len(results)} matching fund(s):")
+        print("=" * 60)
+        
+        for idx, fund in enumerate(results[:limit], 1):
+            print(f"{idx}. {fund['schemeName']}")
+            print(f"   Scheme Code: {fund['schemeCode']}")
+            print()
+        
+        if len(results) > limit:
+            print(f"... and {len(results) - limit} more results")
+            print()
+        
+        selection = input("Enter the number of the fund to analyze (or 'q' to quit): ").strip()
+        
+        if selection.lower() == 'q':
+            return None
+        
+        try:
+            selected_idx = int(selection) - 1
+            if 0 <= selected_idx < min(len(results), limit):
+                return results[selected_idx]
             else:
                 print("\n❌ Invalid selection.")
                 return None
