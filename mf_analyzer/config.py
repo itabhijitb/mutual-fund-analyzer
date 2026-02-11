@@ -45,7 +45,7 @@ FUND_CATEGORIES = {
     '18': {'name': 'Aggressive Hybrid', 'search': 'Aggressive Hybrid'},
     '19': {'name': 'Conservative Hybrid', 'search': 'Conservative Hybrid'},
     '20': {'name': 'Equity Savings', 'search': 'Equity Savings'},
-    '21': {'name': 'Multi Asset Allocation', 'search': 'Multi-Asset'},
+    '21': {'name': 'Multi Asset Allocation', 'search': 'Multi Asset'},
     '22': {'name': 'Arbitrage Fund', 'search': 'Arbitrage'},
     '23': {'name': 'Index Fund - Nifty 50', 'search': 'Nifty 50'},
     '24': {'name': 'Index Fund - Sensex', 'search': 'Sensex'},
