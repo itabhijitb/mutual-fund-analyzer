@@ -136,7 +136,7 @@ class FundComparator:
         
         # Determine winner with minimum threshold
         score_diff = abs(fund1_score - fund2_score)
-        if score_diff < 5:  # Less than 5% difference = tie
+        if score_diff < 2:  # Less than 2% difference = tie
             winner = 'tie'
         else:
             winner = 'fund1' if fund1_score > fund2_score else 'fund2'
@@ -243,7 +243,7 @@ class FundComparator:
         if winner == 'tie':
             recommended_fund = "Both funds are equally matched"
             confidence = "Low"
-            reason = "Efficiency scores are within 5% - no clear winner based on risk-adjusted analysis"
+            reason = "Efficiency scores are within 2% - no clear winner based on risk-adjusted analysis"
             trade_off_analysis = "Both funds offer similar risk-return trade-offs"
         else:
             recommended_fund = fund1_name if winner == 'fund1' else fund2_name
