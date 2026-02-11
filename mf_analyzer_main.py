@@ -261,6 +261,9 @@ class MutualFundAnalyzer:
         if not scheme_code2:
             return
         
+        # Get comparison period
+        comparison_period = self.ui.get_comparison_period()
+        
         try:
             # Fetch NAV data for both funds
             print("\n⏳ Fetching NAV data for both funds...")
@@ -268,14 +271,15 @@ class MutualFundAnalyzer:
             nav_data2 = self.api_client.fetch_nav_history(scheme_code2)
             
             # Calculate metrics for both funds
-            print("⏳ Calculating comprehensive metrics...")
+            period_desc = f"{comparison_period} years" if comparison_period else "entire history"
+            print(f"⏳ Calculating comprehensive metrics ({period_desc})...")
             metrics1 = self.calculator.calculate_comprehensive_metrics(
                 nav_data1,
-                analysis_period_years=DEFAULT_ANALYSIS_PERIOD_YEARS
+                analysis_period_years=comparison_period
             )
             metrics2 = self.calculator.calculate_comprehensive_metrics(
                 nav_data2,
-                analysis_period_years=DEFAULT_ANALYSIS_PERIOD_YEARS
+                analysis_period_years=comparison_period
             )
             
             # Compare funds

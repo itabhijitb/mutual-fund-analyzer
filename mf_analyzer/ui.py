@@ -245,6 +245,31 @@ class ConsoleUI:
             return None
     
     @staticmethod
+    def display_fund_metadata(metadata: dict) -> None:
+        """Display fund metadata including fund house, category, NAV, time in market"""
+        print("\n" + "=" * 70)
+        print("ℹ️  FUND INFORMATION")
+        print("=" * 70)
+        
+        print(f"\n📋 Fund Name: {metadata.get('scheme_name', 'N/A')}")
+        print(f"🏢 Fund House: {metadata.get('fund_house', 'N/A')}")
+        print(f"📂 Category: {metadata.get('scheme_category', 'N/A')}")
+        print(f"📄 Scheme Type: {metadata.get('scheme_type', 'N/A')}")
+        print(f"🔢 Scheme Code: {metadata.get('scheme_code', 'N/A')}")
+        
+        print(f"\n💰 Current NAV: ₹{metadata.get('current_nav', 0):.4f}")
+        print(f"📅 Latest NAV Date: {metadata.get('latest_nav_date', 'N/A')}")
+        print(f"🚀 Inception Date: {metadata.get('inception_date', 'N/A')}")
+        print(f"⏱️  Time in Market: {metadata.get('years_in_market', 0)} years")
+        
+        if metadata.get('isin_growth', 'N/A') != 'N/A':
+            print(f"\n🔖 ISIN (Growth): {metadata.get('isin_growth', 'N/A')}")
+        if metadata.get('isin_div_reinvestment', 'N/A') != 'N/A':
+            print(f"🔖 ISIN (Dividend): {metadata.get('isin_div_reinvestment', 'N/A')}")
+        
+        print("\n" + "=" * 70)
+    
+    @staticmethod
     def display_metrics(metrics: dict) -> None:
         """Display comprehensive metrics in organized format"""
         print("\n" + "=" * 70)
@@ -308,6 +333,50 @@ class ConsoleUI:
         return response == 'y'
     
     @staticmethod
+    def get_comparison_period() -> Optional[int]:
+        """
+        Get comparison period from user.
+        
+        Returns:
+            Number of years for comparison or None for entire history
+        """
+        print("\n" + "=" * 70)
+        print("📅 COMPARISON PERIOD")
+        print("=" * 70)
+        print("\nChoose analysis period for comparison:")
+        print("  1. Entire fund history (recommended for complete picture)")
+        print("  2. Last 10 years")
+        print("  3. Last 5 years (apples-to-apples comparison)")
+        print("  4. Last 3 years")
+        print("  5. Custom period")
+        print("=" * 70)
+        
+        choice = input("\nEnter your choice (1-5): ").strip()
+        
+        if choice == '1':
+            return None
+        elif choice == '2':
+            return 10
+        elif choice == '3':
+            return 5
+        elif choice == '4':
+            return 3
+        elif choice == '5':
+            try:
+                years = int(input("Enter number of years: ").strip())
+                if years > 0:
+                    return years
+                else:
+                    print("\n⚠️  Invalid input. Using entire history.")
+                    return None
+            except ValueError:
+                print("\n⚠️  Invalid input. Using entire history.")
+                return None
+        else:
+            print("\n⚠️  Invalid choice. Using entire history.")
+            return None
+    
+    @staticmethod
     def display_comparison(comparison: dict) -> None:
         """Display fund comparison results with recommendation"""
         print("\n" + "=" * 80)
@@ -320,6 +389,30 @@ class ConsoleUI:
         print(f"\n📊 Comparing:")
         print(f"  Fund 1: {fund1_name}")
         print(f"  Fund 2: {fund2_name}")
+        
+        # Display analysis period information
+        fund1_metrics = comparison['fund1_metrics']
+        fund2_metrics = comparison['fund2_metrics']
+        
+        print(f"\n📅 Analysis Period:")
+        print(f"  Fund 1: {fund1_metrics.get('Analysis Period', 'N/A')} ({fund1_metrics.get('Start Date', 'N/A')} to {fund1_metrics.get('End Date', 'N/A')})")
+        print(f"  Fund 2: {fund2_metrics.get('Analysis Period', 'N/A')} ({fund2_metrics.get('Start Date', 'N/A')} to {fund2_metrics.get('End Date', 'N/A')})")
+        
+        # Display recommendation at the top
+        print("\n" + "=" * 80)
+        print("💡 RECOMMENDATION SUMMARY")
+        print("=" * 80)
+        rec = comparison['recommendation']
+        
+        print(f"\n  🎯 Recommended Fund: {rec['recommended_fund']}")
+        print(f"  📊 Confidence Level: {rec['confidence']}")
+        print(f"  📝 Primary Reason: {rec['reason']}")
+        print(f"  ⚠️  Risk Profile: {rec['risk_profile']}")
+        print(f"  ⏰ Investment Horizon: {rec['suggested_investment_horizon']}")
+        
+        scores = comparison['scores']
+        print(f"\n  🏆 Overall Scores: Fund 1: {scores['fund1_score']:.1f}/100 | Fund 2: {scores['fund2_score']:.1f}/100")
+        print(f"  📊 Score Difference: {abs(scores['fund1_score'] - scores['fund2_score']):.1f} points")
         
         # Display metric-by-metric comparison
         print("\n" + "=" * 80)
@@ -343,29 +436,15 @@ class ConsoleUI:
             
             print(f"{metric:<30} {val1:>15.2f} {val2:>15.2f} {winner_display:>15}")
         
-        # Display scores
+        # Display detailed strengths and weaknesses
         print("\n" + "=" * 80)
-        print("🏆 OVERALL SCORES")
+        print("📊 DETAILED ANALYSIS")
         print("=" * 80)
-        scores = comparison['scores']
-        print(f"\n  Fund 1 Score: {scores['fund1_score']:.2f}/100")
-        print(f"  Fund 2 Score: {scores['fund2_score']:.2f}/100")
-        print(f"  Score Difference: {abs(scores['fund1_score'] - scores['fund2_score']):.2f}")
         
-        # Display recommendation
-        print("\n" + "=" * 80)
-        print("💡 RECOMMENDATION")
-        print("=" * 80)
         rec = comparison['recommendation']
         
-        print(f"\n  🎯 Recommended Fund: {rec['recommended_fund']}")
-        print(f"  📊 Confidence Level: {rec['confidence']}")
-        print(f"  📝 Reason: {rec['reason']}")
-        print(f"  ⚠️  Risk Profile: {rec['risk_profile']}")
-        print(f"  ⏰ Investment Horizon: {rec['suggested_investment_horizon']}")
-        
         if rec['key_strengths']:
-            print(f"\n  ✅ Key Strengths:")
+            print(f"\n  ✅ Key Strengths of Recommended Fund:")
             for strength in rec['key_strengths']:
                 print(f"     • {strength}")
         
