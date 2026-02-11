@@ -461,5 +461,5 @@ class ReportGenerator:
         print(f"   Calmar Ratio............. {top_fund['calmar_ratio']:>8.2f}")
         print(f"   Annual Volatility........ {top_fund['volatility']:>8.2f}%")
         print(f"   Max Drawdown............. {top_fund['max_drawdown']:>8.2f}%")
-        print(f"   Composite Score.......... {top_fund['composite_score']:>8.2f}")
+        print(f"   Efficiency Score......... {top_fund.get('efficiency_score', top_fund.get('composite_score', 'N/A')):>8.2f}")
         print("\n" + "=" * 120)
