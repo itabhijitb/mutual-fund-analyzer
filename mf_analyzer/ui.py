@@ -410,12 +410,19 @@ class ConsoleUI:
         print(f"\n  🎯 Recommended Fund: {rec['recommended_fund']}")
         print(f"  📊 Confidence Level: {rec['confidence']}")
         print(f"  📝 Primary Reason: {rec['reason']}")
-        print(f"  ⚠️  Risk Profile: {rec['risk_profile']}")
+        
+        # Trade-off Analysis
+        if 'trade_off_analysis' in rec:
+            print(f"\n  ⚖️  Trade-off Analysis:")
+            print(f"     {rec['trade_off_analysis']}")
+        
+        print(f"\n  ⚠️  Risk Profile: {rec['risk_profile']}")
         print(f"  ⏰ Investment Horizon: {rec['suggested_investment_horizon']}")
         
         scores = comparison['scores']
-        print(f"\n  🏆 Overall Scores: Fund 1: {scores['fund1_score']:.1f}/100 | Fund 2: {scores['fund2_score']:.1f}/100")
+        print(f"\n  🏆 Efficiency Scores: Fund 1: {scores['fund1_score']:.1f}/100 | Fund 2: {scores['fund2_score']:.1f}/100")
         print(f"  📊 Score Difference: {abs(scores['fund1_score'] - scores['fund2_score']):.1f} points")
+        print(f"  🔬 Methodology: {scores.get('methodology', 'N/A')}")
         
         # Display metric-by-metric comparison
         print("\n" + "=" * 80)
@@ -455,6 +462,19 @@ class ConsoleUI:
             print(f"\n  ⚠️  Areas to Watch:")
             for weakness in rec['key_weaknesses']:
                 print(f"     • {weakness}")
+        
+        print("\n" + "=" * 80)
+        print("🔬 SCORING METHODOLOGY")
+        print("=" * 80)
+        print("\nRisk-Adjusted Efficiency Model:")
+        print("  • Risk-Adjusted Returns (60%): Sharpe, Sortino, Calmar ratios")
+        print("  • Absolute Returns (25%): Logarithmic scaling to prevent marginal gains from dominating")
+        print("  • Risk Penalty (15%): Non-linear penalties for volatility and drawdown")
+        print("\nKey Features:")
+        print("  ✓ Considers trade-offs between return and risk")
+        print("  ✓ Prevents marginal return differences from outweighing significant risk differences")
+        print("  ✓ Uses diminishing returns for absolute performance")
+        print("  ✓ Emphasizes risk-adjusted metrics over raw returns")
         
         print("\n" + "=" * 80)
         print("\n💡 Note: This recommendation is based on historical performance.")
